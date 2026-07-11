@@ -1,0 +1,21 @@
+{
+	"name": "obsidian-gallery",
+	"version": "0.0.1",
+	"description": "Visualização em galeria de cards para o Obsidian.",
+	"main": "main.js",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"@codemirror/state": "^6.7.1",
+		"@codemirror/view": "^6.43.6",
+		"@types/node": "^20.0.0",
+		"builtin-modules": "^3.3.0",
+		"esbuild": "^0.19.0",
+		"obsidian": "latest",
+		"tslib": "2.4.0",
+		"typescript": "^5.0.0"
+	}
+}

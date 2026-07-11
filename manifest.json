@@ -1,0 +1,10 @@
+{
+	"id": "gallery",
+	"name": "Gallery",
+	"version": "0.0.1",
+	"minAppVersion": "1.5.0",
+	"description": "Visualização em galeria de cards a partir de filtros de pasta e propriedades do frontmatter, com edição inline e embed em notas.",
+	"author": "Fernanda",
+	"authorUrl": "",
+	"isDesktopOnly": false
+}
