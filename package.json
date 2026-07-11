@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-gallery",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Visualização em galeria de cards para o Obsidian.",
 	"main": "main.js",
 	"scripts": {

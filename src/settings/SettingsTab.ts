@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type GalleryPlugin from "../main";
-import { deleteView, generateViewId, saveSettings, upsertView } from "../data/store";
+import { deleteView, replaceView, resolverIdEscolhido, saveSettings, upsertView } from "../data/store";
 import type { SavedGalleryView } from "../types";
 import { ViewConfigModal } from "./ViewConfigModal";
 
@@ -21,7 +21,7 @@ export class GallerySettingsTab extends PluginSettingTab {
 				.setCta()
 				.onClick(() => {
 					new ViewConfigModal(this.app, null, async (view) => {
-						view.id = generateViewId(view.name, this.plugin.settings.views);
+						view.id = resolverIdEscolhido(view.id, view.name, this.plugin.settings.views);
 						upsertView(this.plugin.settings, view);
 						await saveSettings(this.plugin, this.plugin.settings);
 						this.display();
@@ -51,8 +51,12 @@ export class GallerySettingsTab extends PluginSettingTab {
 					.setIcon("pencil")
 					.setTooltip("Editar")
 					.onClick(() => {
+						const idAnterior = view.id;
 						new ViewConfigModal(this.app, view, async (updated) => {
-							upsertView(this.plugin.settings, updated);
+							// Resolve o ID digitado (vazio = automático), ignorando a própria view na checagem
+							// de unicidade; replaceView localiza a entrada pelo ID antigo, então trocar o ID não duplica.
+							updated.id = resolverIdEscolhido(updated.id, updated.name, this.plugin.settings.views, idAnterior);
+							replaceView(this.plugin.settings, idAnterior, updated);
 							await saveSettings(this.plugin, this.plugin.settings);
 							this.display();
 						}).open();
@@ -62,15 +66,19 @@ export class GallerySettingsTab extends PluginSettingTab {
 				btn
 					.setIcon("copy")
 					.setTooltip("Duplicar")
-					.onClick(async () => {
+					.onClick(() => {
+						// Abre o modal pré-preenchido para você escolher nome e ID antes de salvar a cópia.
 						const copy: SavedGalleryView = JSON.parse(JSON.stringify(view));
 						copy.name = `${view.name} (cópia)`;
-						copy.id = generateViewId(copy.name, this.plugin.settings.views);
-						copy.createdAt = new Date().toISOString();
-						copy.updatedAt = copy.createdAt;
-						upsertView(this.plugin.settings, copy);
-						await saveSettings(this.plugin, this.plugin.settings);
-						this.display();
+						copy.id = ""; // vazio: você digita, ou deixa gerar automático pelo nome ao salvar
+						new ViewConfigModal(this.app, copy, async (nova) => {
+							nova.id = resolverIdEscolhido(nova.id, nova.name, this.plugin.settings.views);
+							nova.createdAt = new Date().toISOString();
+							nova.updatedAt = nova.createdAt;
+							upsertView(this.plugin.settings, nova);
+							await saveSettings(this.plugin, this.plugin.settings);
+							this.display();
+						}).open();
 					})
 			)
 			.addExtraButton((btn) =>

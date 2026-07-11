@@ -75,6 +75,21 @@ export class ViewConfigModal extends Modal {
 			);
 
 		new Setting(contentEl)
+			.setName("ID")
+			.setDesc(
+				"Usado no embed (view: <id>). Deixe vazio para gerar automaticamente pelo nome. " +
+					"Se mudar o ID de uma visualização já embutida em notas, atualize também os blocos que a usam."
+			)
+			.addText((text) =>
+				text
+					.setPlaceholder("automático pelo nome")
+					.setValue(this.draft.id)
+					.onChange((value) => {
+						this.draft.id = value;
+					})
+			);
+
+		new Setting(contentEl)
 			.setName("Pasta")
 			.setDesc("Filtra notas dentro desta pasta (e subpastas). Deixe vazio para todo o vault.")
 			.addText((text) =>
